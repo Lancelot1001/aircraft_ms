@@ -1,0 +1,44 @@
+<h1>部件管理</h1>
+
+<p>
+  <a href="/components/add" class="btn">+ 新部件入库</a>
+  <a href="/components?status=available" class="btn">可用部件</a>
+  <a href="/components?status=installed" class="btn">已安装</a>
+  <a href="/components?status=retired" class="btn">已退役</a>
+  <a href="/components" class="btn">全部</a>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>部件编号</th>
+      <th>型号</th>
+      <th>类别</th>
+      <th>批次</th>
+      <th>生产日期</th>
+      <th>状态</th>
+      <th>累计时长(h)</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (components.length) { %>
+      <% components.forEach(function(c) { %>
+        <tr>
+          <td><%= c.id %></td>
+          <td><%= c.component_sn %></td>
+          <td><%= c.model_name %></td>
+          <td><%= c.category %></td>
+          <td><%= c.batch_number %></td>
+          <td><%= c.production_date %></td>
+          <td><span class="status status-<%= c.status %>"><%= c.status %></span></td>
+          <td><%= c.cumulative_hours %></td>
+          <td><a href="/components/<%= c.id %>">详情</a></td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="9">暂无部件数据</td></tr>
+    <% } %>
+  </tbody>
+</table>

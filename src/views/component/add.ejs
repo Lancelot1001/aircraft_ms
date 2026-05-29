@@ -1,0 +1,36 @@
+<h1>部件入库</h1>
+
+<form method="POST" action="/components/add">
+  <div class="form-group">
+    <label>部件编号 <span class="required">*</span></label>
+    <input type="text" name="component_sn" placeholder="如 ENG-003" required>
+  </div>
+
+  <div class="form-group">
+    <label>部件型号 <span class="required">*</span></label>
+    <select name="model_id" required>
+      <option value="">-- 请选择型号 --</option>
+      <% models.forEach(function(m) { %>
+        <option value="<%= m.id %>"><%= m.model_name %> (<%= m.category %>)</option>
+      <% }); %>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>批次号 <span class="required">*</span></label>
+    <input type="text" name="batch_number" placeholder="如 B2025-A03" required>
+  </div>
+
+  <div class="form-group">
+    <label>生产日期 <span class="required">*</span></label>
+    <input type="date" name="production_date" required>
+  </div>
+
+  <div class="form-group">
+    <label>备注</label>
+    <input type="text" name="notes" placeholder="可选备注信息">
+  </div>
+
+  <button type="submit" class="btn btn-primary">确认入库</button>
+  <a href="/components" class="btn">返回列表</a>
+</form>

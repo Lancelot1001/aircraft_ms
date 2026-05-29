@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>航空部件生命周期与维修管理系统</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <nav>
+    <div class="nav-brand">航空部件管理系统</div>
+    <div class="nav-links">
+      <a href="/">首页</a>
+      <a href="/components">部件管理</a>
+      <a href="/components/add">部件入库</a>
+      <a href="/installations">安装记录</a>
+      <a href="/installations/install">安装部件</a>
+      <a href="/installations/uninstall">拆卸部件</a>
+      <a href="/installations/swap">部件更换</a>
+    </div>
+  </nav>
+
+  <main>
+    <% if (typeof error === 'string' && error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    <% if (typeof success === 'string' && success) { %>
+      <div class="alert alert-success"><%= success %></div>
+    <% } %>
+    <%- body %>
+  </main>
+</body>
+</html>

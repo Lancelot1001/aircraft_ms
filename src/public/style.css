@@ -1,0 +1,201 @@
+/* ============================================
+   航空部件管理系统 — 简易样式
+   ============================================ */
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background: #f5f5f5;
+}
+
+/* 导航栏 */
+nav {
+  background: #1a1a2e;
+  color: white;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  flex-wrap: wrap;
+}
+
+.nav-brand {
+  font-weight: bold;
+  font-size: 16px;
+  margin-right: 30px;
+}
+
+.nav-links { display: flex; flex-wrap: wrap; }
+
+.nav-links a {
+  color: #ccc;
+  text-decoration: none;
+  padding: 12px 14px;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: white; }
+
+/* 主体 */
+main {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+h1 { font-size: 22px; margin-bottom: 16px; color: #1a1a2e; }
+h2 { font-size: 17px; margin: 24px 0 12px; color: #444; }
+
+/* 统计卡片 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #f0f4ff;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+  border-left: 4px solid #1a1a2e;
+}
+
+.stat-number { font-size: 32px; font-weight: bold; color: #1a1a2e; }
+.stat-label { font-size: 13px; color: #666; margin-top: 4px; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+
+th, td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th { background: #f8f8f8; font-weight: 600; font-size: 13px; }
+tr:hover { background: #fafafa; }
+
+/* 按钮 */
+.btn {
+  display: inline-block;
+  padding: 6px 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: white;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+.btn:hover { background: #f0f0f0; }
+
+.btn-primary {
+  background: #1a1a2e;
+  color: white;
+  border-color: #1a1a2e;
+}
+
+.btn-primary:hover { background: #2d2d4a; }
+
+/* 表单 */
+.form-group { margin-bottom: 14px; }
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.form-group input, .form-group select {
+  width: 100%;
+  max-width: 500px;
+  padding: 7px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.form-group input:focus, .form-group select:focus {
+  outline: none;
+  border-color: #1a1a2e;
+}
+
+.required { color: #e74c3c; }
+.hint { font-size: 12px; color: #999; margin-top: 4px; }
+
+fieldset {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+legend { font-weight: bold; padding: 0 8px; }
+
+/* 提示 */
+.alert {
+  padding: 10px 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert-error {
+  background: #fde8e8;
+  color: #c0392b;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+/* 状态标签 */
+.status {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-available { background: #d4edda; color: #155724; }
+.status-installed { background: #cce5ff; color: #004085; }
+.status-under_maintenance { background: #fff3cd; color: #856404; }
+.status-retired { background: #f8d7da; color: #721c24; }
+
+/* 详情卡片 */
+.detail-card {
+  background: #f8f9fa;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.detail-card table td { border: none; padding: 6px 16px 6px 0; }
+
+.detail-card table td:first-child {
+  font-weight: 600;
+  color: #666;
+  width: 120px;
+}

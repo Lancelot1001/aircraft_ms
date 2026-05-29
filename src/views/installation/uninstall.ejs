@@ -1,0 +1,35 @@
+<h1>拆卸部件</h1>
+
+<form method="POST" action="/installations/uninstall">
+  <div class="form-group">
+    <label>选择已安装部件 <span class="required">*</span></label>
+    <select name="component_id" required>
+      <option value="">-- 请选择已安装部件 --</option>
+      <% installed.forEach(function(c) { %>
+        <option value="<%= c.id %>">
+          <%= c.component_sn %> — 飞机 <%= c.aircraft_sn %> — 位置 <%= c.position %>（安装于 <%= new Date(c.installed_at).toLocaleDateString() %>）
+        </option>
+      <% }); %>
+    </select>
+    <% if (!installed.length) { %>
+      <p class="hint">当前没有已安装的部件</p>
+    <% } %>
+  </div>
+
+  <div class="form-group">
+    <label>拆卸原因</label>
+    <input type="text" name="removal_reason" placeholder="如 定期检修、部件更换、性能下降">
+  </div>
+
+  <div class="form-group">
+    <label>操作人员 <span class="required">*</span></label>
+    <select name="operator_id" required>
+      <option value="">-- 请选择操作人员 --</option>
+      <% operators.forEach(function(o) { %>
+        <option value="<%= o.id %>"><%= o.name %> (<%= o.role %>)</option>
+      <% }); %>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary">确认拆卸</button>
+</form>

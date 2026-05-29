@@ -1,0 +1,68 @@
+<h1>部件更换 <span class="hint">（事务场景一）</span></h1>
+
+<form method="POST" action="/installations/swap">
+  <fieldset>
+    <legend>旧部件（待拆卸）</legend>
+    <div class="form-group">
+      <label>选择已安装部件 <span class="required">*</span></label>
+      <select name="old_component_id" required>
+        <option value="">-- 请选择 --</option>
+        <% installed.forEach(function(c) { %>
+          <option value="<%= c.id %>">
+            <%= c.component_sn %> — 飞机 <%= c.aircraft_sn %> — 位置 <%= c.position %>
+          </option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>拆卸原因</label>
+      <input type="text" name="removal_reason" placeholder="如 性能下降需更换" value="部件更换拆卸">
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>新部件（待安装）</legend>
+    <div class="form-group">
+      <label>选择新部件 <span class="required">*</span></label>
+      <select name="new_component_id" required>
+        <option value="">-- 请选择可用部件 --</option>
+        <% available.forEach(function(c) { %>
+          <option value="<%= c.id %>"><%= c.component_sn %> — <%= c.model_name %></option>
+        <% }); %>
+      </select>
+      <% if (!available.length) { %>
+        <p class="hint">没有可用的备用部件</p>
+      <% } %>
+    </div>
+    <div class="form-group">
+      <label>安装位置 <span class="required">*</span></label>
+      <input type="text" name="position" placeholder="应与旧部件位置一致" required>
+    </div>
+    <div class="form-group">
+      <label>安装原因 <span class="required">*</span></label>
+      <input type="text" name="install_reason" placeholder="如 更换老化部件" value="部件更换安装" required>
+    </div>
+  </fieldset>
+
+  <div class="form-group">
+    <label>目标飞机 <span class="required">*</span></label>
+    <select name="aircraft_id" required>
+      <option value="">-- 请选择 --</option>
+      <% aircraft.forEach(function(a) { %>
+        <option value="<%= a.id %>"><%= a.aircraft_sn %> — <%= a.model %></option>
+      <% }); %>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>操作人员 <span class="required">*</span></label>
+    <select name="operator_id" required>
+      <option value="">-- 请选择 --</option>
+      <% operators.forEach(function(o) { %>
+        <option value="<%= o.id %>"><%= o.name %> (<%= o.role %>)</option>
+      <% }); %>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary">执行更换（事务操作）</button>
+</form>

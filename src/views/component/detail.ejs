@@ -1,0 +1,54 @@
+<h1>部件详情</h1>
+
+<% if (!component) { %>
+  <div class="alert alert-error">部件不存在</div>
+  <a href="/components" class="btn">返回列表</a>
+<% } else { %>
+
+  <div class="detail-card">
+    <h2><%= component.component_sn %></h2>
+    <table>
+      <tr><td>型号</td><td><%= component.model_name %> (<%= component.category %>)</td></tr>
+      <tr><td>批次号</td><td><%= component.batch_number %></td></tr>
+      <tr><td>生产日期</td><td><%= component.production_date %></td></tr>
+      <tr><td>状态</td><td><span class="status status-<%= component.status %>"><%= component.status %></span></td></tr>
+      <tr><td>累计使用时长</td><td><%= component.cumulative_hours %> 小时</td></tr>
+      <tr><td>设计寿命</td><td><%= component.design_life_hours %> 小时</td></tr>
+      <tr><td>备注</td><td><%= component.notes || '—' %></td></tr>
+    </table>
+  </div>
+
+  <h2>安装历史</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>飞机</th>
+        <th>位置</th>
+        <th>安装时间</th>
+        <th>拆卸时间</th>
+        <th>安装原因</th>
+        <th>拆卸原因</th>
+        <th>操作员</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (installHistory.length) { %>
+        <% installHistory.forEach(function(h) { %>
+          <tr>
+            <td><%= h.aircraft_sn %> (<%= h.aircraft_model %>)</td>
+            <td><%= h.position %></td>
+            <td><%= h.installed_at %></td>
+            <td><%= h.removed_at || '当前在位' %></td>
+            <td><%= h.install_reason %></td>
+            <td><%= h.removal_reason || '—' %></td>
+            <td><%= h.operator_name || '—' %></td>
+          </tr>
+        <% }); %>
+      <% } else { %>
+        <tr><td colspan="7">暂无安装记录</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <a href="/components" class="btn">返回列表</a>
+<% } %>

@@ -1,0 +1,48 @@
+<h1>系统概览</h1>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-number"><%= stats.components %></div>
+    <div class="stat-label">部件总数</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= stats.aircraft %></div>
+    <div class="stat-label">飞机数量</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= stats.activeInstalls %></div>
+    <div class="stat-label">当前安装中</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number"><%= stats.maintenances %></div>
+    <div class="stat-label">维修记录</div>
+  </div>
+</div>
+
+<h2>最近飞行记录</h2>
+<table>
+  <thead>
+    <tr>
+      <th>飞机编号</th>
+      <th>起飞时间</th>
+      <th>降落时间</th>
+      <th>飞行时长(h)</th>
+      <th>任务类型</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (recentFlights.length) { %>
+      <% recentFlights.forEach(function(f) { %>
+        <tr>
+          <td><%= f.aircraft_sn %></td>
+          <td><%= f.takeoff_time %></td>
+          <td><%= f.landing_time %></td>
+          <td><%= f.flight_duration %></td>
+          <td><%= f.mission_type %></td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="5">暂无飞行记录</td></tr>
+    <% } %>
+  </tbody>
+</table>
