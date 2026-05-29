@@ -105,7 +105,7 @@ CREATE TABLE InstallationRecord (
     CONSTRAINT fk_install_operator FOREIGN KEY (operator_id) REFERENCES Operator(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT uq_active_install UNIQUE (component_id, active_flag),
-    CONSTRAINT chk_install_time CHECK (removed_at IS NULL OR removed_at > installed_at)
+    CONSTRAINT chk_install_time CHECK (removed_at IS NULL OR removed_at >= installed_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='安装记录表 — 时间区间建模，保留完整安装/拆卸历史';
 
@@ -237,8 +237,8 @@ CREATE TRIGGER trg_install_before_update
 BEFORE UPDATE ON InstallationRecord
 FOR EACH ROW
 BEGIN
-    -- 不允许修改 installed_at 使其晚于一个已设置的 removed_at
-    IF NEW.removed_at IS NOT NULL AND NEW.installed_at >= NEW.removed_at THEN
+    -- 不允许修改 installed_at 使其晚于等于 removed_at
+    IF NEW.removed_at IS NOT NULL AND NEW.installed_at > NEW.removed_at THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = '错误：安装时间必须早于拆卸时间。';
     END IF;
@@ -305,6 +305,62 @@ BEGIN
     IF OLD.status = 'retired' AND NEW.status != 'retired' THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = '错误：退役状态不可逆，已退役的部件无法恢复为其他状态。';
+    END IF;
+END$$
+
+-- -------------------------------------------------------
+-- 触发器 7-10：禁止物理删除核心业务数据
+-- 需求第四节第4条：核心业务数据原则上不允许物理删除
+-- -------------------------------------------------------
+DROP TRIGGER IF EXISTS trg_no_delete_installation$$
+CREATE TRIGGER trg_no_delete_installation
+BEFORE DELETE ON InstallationRecord
+FOR EACH ROW
+BEGIN
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = '错误：禁止物理删除安装记录。部件拆卸请通过 UPDATE 设置 removed_at。';
+END$$
+
+DROP TRIGGER IF EXISTS trg_no_delete_maintenance$$
+CREATE TRIGGER trg_no_delete_maintenance
+BEFORE DELETE ON MaintenanceRecord
+FOR EACH ROW
+BEGIN
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = '错误：禁止物理删除维修记录。维修数据属于审计档案，不可删除。';
+END$$
+
+DROP TRIGGER IF EXISTS trg_no_delete_flightlog$$
+CREATE TRIGGER trg_no_delete_flightlog
+BEFORE DELETE ON FlightLog
+FOR EACH ROW
+BEGIN
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = '错误：禁止物理删除飞行日志。飞行记录属于审计档案，不可删除。';
+END$$
+
+DROP TRIGGER IF EXISTS trg_no_delete_scrap$$
+CREATE TRIGGER trg_no_delete_scrap
+BEFORE DELETE ON ScrapOrRetirementRecord
+FOR EACH ROW
+BEGIN
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = '错误：禁止物理删除退役记录。退役数据属于审计档案，不可删除。';
+END$$
+
+-- -------------------------------------------------------
+-- 触发器 11：禁止篡改安装历史记录的关键字段
+-- -------------------------------------------------------
+DROP TRIGGER IF EXISTS trg_no_tamper_install$$
+CREATE TRIGGER trg_no_tamper_install
+BEFORE UPDATE ON InstallationRecord
+FOR EACH ROW
+BEGIN
+    IF OLD.component_id != NEW.component_id
+       OR OLD.aircraft_id != NEW.aircraft_id
+       OR OLD.installed_at != NEW.installed_at THEN
+        SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = '错误：禁止篡改安装记录的关键字段（component_id / aircraft_id / installed_at）。';
     END IF;
 END$$
 
