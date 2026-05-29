@@ -1,0 +1,49 @@
+<h1>维修记录</h1>
+
+<p>
+  <a href="/maintenance/create" class="btn btn-primary">+ 创建维修工单</a>
+  <a href="/maintenance?filter=active" class="btn">维修中</a>
+  <a href="/maintenance?filter=completed" class="btn">已完成</a>
+  <a href="/maintenance" class="btn">全部</a>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>部件编号</th>
+      <th>型号</th>
+      <th>维修类型</th>
+      <th>送修时间</th>
+      <th>完成时间</th>
+      <th>维修结论</th>
+      <th>操作员</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (maintenances.length) { %>
+      <% maintenances.forEach(function(m) { %>
+        <tr>
+          <td><%= m.id %></td>
+          <td><%= m.component_sn %></td>
+          <td><%= m.model_name %></td>
+          <td><span class="maintenance-type maintenance-<%= m.maintenance_type %>"><%= m.maintenance_type %></span></td>
+          <td><%= m.started_at %></td>
+          <td><%= m.completed_at || '<span class="status status-under_maintenance">维修中</span>' %></td>
+          <td><%= m.maintenance_result || '—' %></td>
+          <td><%= m.operator_name || '—' %></td>
+          <td>
+            <% if (!m.completed_at) { %>
+              <a href="/maintenance/<%= m.id %>/complete" class="btn">完成维修</a>
+            <% } else { %>
+              <span style="color:#999">已完成</span>
+            <% } %>
+          </td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="9">暂无维修记录</td></tr>
+    <% } %>
+  </tbody>
+</table>

@@ -17,10 +17,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 const indexRoutes = require('./routes/index');
 const componentRoutes = require('./routes/component');
 const installationRoutes = require('./routes/installation');
+const maintenanceRoutes = require('./routes/maintenance');
+const retirementRoutes = require('./routes/retirement');
 
 app.use('/', indexRoutes);
 app.use('/components', componentRoutes);
 app.use('/installations', installationRoutes);
+app.use('/maintenance', maintenanceRoutes);
+app.use('/retirements', retirementRoutes);
 
 // 404
 app.use((req, res) => {

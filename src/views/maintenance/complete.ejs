@@ -1,0 +1,41 @@
+<h1>维修完成 <span class="hint">（事务场景三）</span></h1>
+
+<% if (record) { %>
+  <div class="detail-card">
+    <table>
+      <tr><td>工单 ID</td><td><%= record.id %></td></tr>
+      <tr><td>部件</td><td><%= record.component_sn %> — <%= record.model_name %></td></tr>
+      <tr><td>维修类型</td><td><%= record.maintenance_type %></td></tr>
+      <tr><td>送修时间</td><td><%= record.started_at %></td></tr>
+      <tr><td>操作员</td><td><%= record.operator_name || '—' %></td></tr>
+      <tr><td>备注</td><td><%= record.notes || '—' %></td></tr>
+    </table>
+  </div>
+
+  <% if (record.completed_at) { %>
+    <div class="alert alert-success">该工单已完成：<%= record.maintenance_result %></div>
+  <% } else { %>
+    <form method="POST" action="/maintenance/<%= record.id %>/complete">
+      <div class="form-group">
+        <label>维修结论 <span class="required">*</span></label>
+        <select name="maintenance_result" required>
+          <option value="">-- 请选择 --</option>
+          <option value="修复完成">修复完成</option>
+          <option value="需更换">需更换</option>
+          <option value="报废">报废</option>
+          <option value="待观察">待观察</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>补充备注</label>
+        <input type="text" name="notes" placeholder="可选">
+      </div>
+
+      <button type="submit" class="btn btn-primary">确认完成（事务操作）</button>
+      <a href="/maintenance" class="btn">返回列表</a>
+    </form>
+  <% } %>
+<% } %>
+
+<a href="/maintenance" class="btn">返回列表</a>

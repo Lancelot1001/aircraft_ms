@@ -1,0 +1,59 @@
+<h1>部件退役处理 <span class="hint">（事务场景二）</span></h1>
+
+<form method="POST" action="/retirements/retire">
+  <div class="form-group">
+    <label>选择部件 <span class="required">*</span></label>
+    <select name="component_id" required>
+      <option value="">-- 请选择 --</option>
+      <% components.forEach(function(c) { %>
+        <option value="<%= c.id %>" <%= form.component_id == c.id ? 'selected' : '' %>>
+          <%= c.component_sn %> — <%= c.model_name %>
+          (<%= c.status === 'installed' ? '当前在位（会自动拆卸）' : '仓库中' %>)
+        </option>
+      <% }); %>
+    </select>
+    <% if (!components.length) { %>
+      <p class="hint">没有可退役的部件</p>
+    <% } %>
+  </div>
+
+  <div class="form-group">
+    <label>退役原因 <span class="required">*</span></label>
+    <select name="reason" required>
+      <option value="">-- 请选择 --</option>
+      <option value="寿命到期" <%= form.reason === '寿命到期' ? 'selected' : '' %>>寿命到期</option>
+      <option value="不可修复损坏" <%= form.reason === '不可修复损坏' ? 'selected' : '' %>>不可修复损坏</option>
+      <option value="技术淘汰" <%= form.reason === '技术淘汰' ? 'selected' : '' %>>技术淘汰</option>
+      <option value="其他" <%= form.reason === '其他' ? 'selected' : '' %>>其他</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>审批信息 <span class="required">*</span></label>
+    <input type="text" name="approval_info" placeholder="如 审批编号 RT-2025-XXX" value="<%= form.approval_info || '' %>" required>
+  </div>
+
+  <div class="form-group">
+    <label>备注</label>
+    <input type="text" name="notes" placeholder="可选" value="<%= form.notes || '' %>">
+  </div>
+
+  <div class="form-group">
+    <label>审批人员 <span class="required">*</span></label>
+    <select name="operator_id" required>
+      <option value="">-- 请选择 --</option>
+      <% operators.forEach(function(o) { %>
+        <option value="<%= o.id %>" <%= form.operator_id == o.id ? 'selected' : '' %>><%= o.name %> (<%= o.role %>)</option>
+      <% }); %>
+    </select>
+  </div>
+
+  <div class="alert alert-error" style="background:#fff3cd;color:#856404;border-color:#ffeeba;">
+    注意：退役操作不可逆！退役后部件将被永久标记为 retired，无法再次安装或维修。
+    <% if (components.some(c => c.status === 'installed')) { %>
+      若选中已安装的部件，系统将自动先关闭安装记录再执行退役。
+    <% } %>
+  </div>
+
+  <button type="submit" class="btn btn-primary">确认退役（事务操作）</button>
+</form>

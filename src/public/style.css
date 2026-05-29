@@ -41,6 +41,8 @@ nav {
 
 .nav-links a:hover { color: white; }
 
+.nav-sep { color: #555; padding: 12px 4px; font-size: 13px; }
+
 /* 主体 */
 main {
   max-width: 1100px;
@@ -183,6 +185,20 @@ legend { font-weight: bold; padding: 0 8px; }
 .status-installed { background: #cce5ff; color: #004085; }
 .status-under_maintenance { background: #fff3cd; color: #856404; }
 .status-retired { background: #f8d7da; color: #721c24; }
+
+/* 维修类型标签 */
+.maintenance-type {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.maintenance-routine { background: #d4edda; color: #155724; }
+.maintenance-repair { background: #fff3cd; color: #856404; }
+.maintenance-overhaul { background: #f8d7da; color: #721c24; }
+.maintenance-inspection { background: #cce5ff; color: #004085; }
 
 /* 详情卡片 */
 .detail-card {

@@ -1,0 +1,53 @@
+<h1>创建维修工单</h1>
+
+<form method="POST" action="/maintenance/create">
+  <div class="form-group">
+    <label>选择部件 <span class="required">*</span></label>
+    <select name="component_id" required>
+      <option value="">-- 请选择 --</option>
+      <% components.forEach(function(c) { %>
+        <option value="<%= c.id %>" <%= form.component_id == c.id ? 'selected' : '' %>>
+          <%= c.component_sn %> — <%= c.model_name %>
+          (<%= c.status === 'installed' ? '当前在位' : '仓库可用' %>)
+        </option>
+      <% }); %>
+    </select>
+    <% if (!components.length) { %>
+      <p class="hint">没有可维修的部件（部件状态需为 available 或 installed）</p>
+    <% } %>
+  </div>
+
+  <div class="form-group">
+    <label>维修类型 <span class="required">*</span></label>
+    <select name="maintenance_type" required>
+      <option value="">-- 请选择 --</option>
+      <option value="routine" <%= form.maintenance_type === 'routine' ? 'selected' : '' %>>定期检修 (routine)</option>
+      <option value="repair" <%= form.maintenance_type === 'repair' ? 'selected' : '' %>>故障维修 (repair)</option>
+      <option value="overhaul" <%= form.maintenance_type === 'overhaul' ? 'selected' : '' %>>大修 (overhaul)</option>
+      <option value="inspection" <%= form.maintenance_type === 'inspection' ? 'selected' : '' %>>检查 (inspection)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>送修时间</label>
+    <input type="datetime-local" name="started_at" value="<%= form.started_at || '' %>">
+    <p class="hint">留空则使用当前时间</p>
+  </div>
+
+  <div class="form-group">
+    <label>备注</label>
+    <input type="text" name="notes" placeholder="可选备注" value="<%= form.notes || '' %>">
+  </div>
+
+  <div class="form-group">
+    <label>操作人员 <span class="required">*</span></label>
+    <select name="operator_id" required>
+      <option value="">-- 请选择 --</option>
+      <% operators.forEach(function(o) { %>
+        <option value="<%= o.id %>" <%= form.operator_id == o.id ? 'selected' : '' %>><%= o.name %> (<%= o.role %>)</option>
+      <% }); %>
+    </select>
+  </div>
+
+  <button type="submit" class="btn btn-primary">创建工单</button>
+</form>

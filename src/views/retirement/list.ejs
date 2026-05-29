@@ -1,0 +1,54 @@
+<h1>退役记录</h1>
+
+<p>
+  <a href="/retirements/retire" class="btn btn-primary">+ 部件退役</a>
+</p>
+
+<% if (stats.length) { %>
+  <h2>退役原因分布</h2>
+  <table>
+    <thead>
+      <tr><th>退役原因</th><th>数量</th></tr>
+    </thead>
+    <tbody>
+      <% stats.forEach(function(s) { %>
+        <tr>
+          <td><%= s.reason %></td>
+          <td><%= s.count %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<h2>退役记录列表</h2>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>部件编号</th>
+      <th>型号</th>
+      <th>退役时间</th>
+      <th>原因</th>
+      <th>审批信息</th>
+      <th>操作员</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (retirements.length) { %>
+      <% retirements.forEach(function(r) { %>
+        <tr>
+          <td><%= r.id %></td>
+          <td><%= r.component_sn %></td>
+          <td><%= r.model_name %></td>
+          <td><%= r.retired_at %></td>
+          <td><%= r.reason %></td>
+          <td><%= r.approval_info %></td>
+          <td><%= r.operator_name || '—' %></td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="7">暂无退役记录</td></tr>
+    <% } %>
+  </tbody>
+</table>
