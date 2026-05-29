@@ -1,0 +1,62 @@
+<h1>数据查询与分析</h1>
+
+<p>
+  <a href="/query/lifecycle" class="btn">生命周期追溯</a>
+  <a href="/query/stats" class="btn">统计查询</a>
+</p>
+
+<%= error ? '<div class="alert alert-error">'+error+'</div>' : '' %>
+
+<!-- 状态统计 -->
+<h2>部件状态概览</h2>
+<div class="stats-grid">
+  <% statusStats.forEach(function(s) { %>
+    <div class="stat-card">
+      <div class="stat-number"><%= s.count %></div>
+      <div class="stat-label"><%= s.status %></div>
+    </div>
+  <% }); %>
+</div>
+
+<!-- 飞机安装概况 -->
+<h2>当前各飞机部件安装概况</h2>
+<table>
+  <thead>
+    <tr><th>飞机</th><th>在位部件数</th><th>详情</th></tr>
+  </thead>
+  <tbody>
+    <% overview.forEach(function(a) { %>
+      <tr>
+        <td><%= a.aircraft_sn %> (<%= a.aircraft_model %>)</td>
+        <td><%= a.installed_parts %></td>
+        <td style="font-size:12px;"><%= a.parts_detail || '—' %></td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<!-- 退役原因分布（前置展示） -->
+<% if (retirementStats.length) { %>
+  <h2>退役原因分布</h2>
+  <table>
+    <thead><tr><th>原因</th><th>数量</th><th>占比</th></tr></thead>
+    <tbody>
+      <% retirementStats.forEach(function(r) { %>
+        <tr><td><%= r.reason %></td><td><%= r.count %></td><td><%= r.percentage %>%</td></tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>
+
+<!-- MTBM（摘要） -->
+<% if (mtbm.length) { %>
+  <h2>平均维修间隔（MTBM）</h2>
+  <table>
+    <thead><tr><th>型号</th><th>类别</th><th>平均间隔(天)</th><th>样本数</th></tr></thead>
+    <tbody>
+      <% mtbm.forEach(function(m) { %>
+        <tr><td><%= m.model_name %></td><td><%= m.category %></td><td><%= m.avg_mtbm_days %></td><td><%= m.sample_count %></td></tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } %>

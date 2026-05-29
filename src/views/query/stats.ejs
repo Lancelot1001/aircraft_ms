@@ -1,0 +1,48 @@
+<h1>统计查询</h1>
+
+<%= error ? '<div class="alert alert-error">'+error+'</div>' : '' %>
+
+<!-- 查询一：MTBM -->
+<h2>1. 平均维修间隔（MTBM — 按部件型号）</h2>
+<table>
+  <thead><tr><th>型号</th><th>类别</th><th>平均间隔(天)</th><th>样本数</th></tr></thead>
+  <tbody>
+    <% if (mtbm.length) { %>
+      <% mtbm.forEach(function(m) { %>
+        <tr><td><%= m.model_name %></td><td><%= m.category %></td><td><%= m.avg_mtbm_days %></td><td><%= m.sample_count %></td></tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="4">暂无足够数据（需要至少 2 条维修记录才能计算间隔）</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<!-- 查询二：飞机更换频率排行 -->
+<h2>2. 飞机部件更换频率排行</h2>
+<table>
+  <thead><tr><th>飞机</th><th>更换次数</th></tr></thead>
+  <tbody>
+    <% if (swapRanking.length) { %>
+      <% swapRanking.forEach(function(a) { %>
+        <tr><td><%= a.aircraft_sn %> (<%= a.aircraft_model %>)</td><td><%= a.total_replacements %></td></tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="2">暂无更换记录</td></tr>
+    <% } %>
+  </tbody>
+</table>
+
+<!-- 查询三：退役原因分布 -->
+<h2>3. 退役原因分布统计</h2>
+<table>
+  <thead><tr><th>退役原因</th><th>数量</th><th>占比</th></tr></thead>
+  <tbody>
+    <% if (retirementStats.length) { %>
+      <% retirementStats.forEach(function(r) { %>
+        <tr><td><%= r.reason %></td><td><%= r.count %></td><td><%= r.percentage %>%</td></tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="3">暂无退役记录</td></tr>
+    <% } %>
+  </tbody>
+</table>

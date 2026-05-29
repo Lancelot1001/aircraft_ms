@@ -1,0 +1,90 @@
+<h1>生命周期追溯</h1>
+
+<form method="GET" action="/query/lifecycle">
+  <div class="form-group">
+    <label>输入部件编号或 ID</label>
+    <input type="text" name="q" value="<%= q %>" placeholder="如 ENG-001 或 1" style="max-width:300px;">
+  </div>
+  <button type="submit" class="btn btn-primary">查询</button>
+</form>
+
+<% if (result) { %>
+  <% var c = result.component; %>
+
+  <h2>基本属性</h2>
+  <div class="detail-card">
+    <table>
+      <tr><td>部件编号</td><td><%= c.component_sn %></td></tr>
+      <tr><td>型号</td><td><%= c.model_name %> (<%= c.category %>)</td></tr>
+      <tr><td>批次号</td><td><%= c.batch_number %></td></tr>
+      <tr><td>生产日期</td><td><%= c.production_date %></td></tr>
+      <tr><td>设计寿命</td><td><%= c.design_life_hours %> 小时</td></tr>
+      <tr><td>建议维修间隔</td><td><%= c.maintenance_interval_hours %> 小时</td></tr>
+      <tr><td>累计使用时长</td><td><%= c.cumulative_hours %> 小时</td></tr>
+      <tr><td>当前状态</td><td><span class="status status-<%= c.status %>"><%= c.status %></span></td></tr>
+      <tr><td>备注</td><td><%= c.notes || '—' %></td></tr>
+    </table>
+  </div>
+
+  <h2>安装历史（<%= result.installHistory.length %> 条）</h2>
+  <table>
+    <thead>
+      <tr><th>飞机</th><th>位置</th><th>安装时间</th><th>拆卸时间</th><th>安装原因</th><th>拆卸原因</th><th>操作员</th></tr>
+    </thead>
+    <tbody>
+      <% result.installHistory.forEach(function(h) { %>
+        <tr>
+          <td><%= h.aircraft_sn %> (<%= h.aircraft_model %>)</td>
+          <td><%= h.position %></td>
+          <td><%= h.installed_at %></td>
+          <td><%= h.removed_at || '当前在位' %></td>
+          <td><%= h.install_reason %></td>
+          <td><%= h.removal_reason || '—' %></td>
+          <td><%= h.operator_name || '—' %></td>
+        </tr>
+      <% }); %>
+      <% if (!result.installHistory.length) { %>
+        <tr><td colspan="7">暂无安装记录</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <h2>维修记录（<%= result.maintenanceHistory.length %> 条）</h2>
+  <table>
+    <thead>
+      <tr><th>类型</th><th>送修时间</th><th>完成时间</th><th>结论</th><th>备注</th><th>操作员</th></tr>
+    </thead>
+    <tbody>
+      <% result.maintenanceHistory.forEach(function(m) { %>
+        <tr>
+          <td><span class="maintenance-type maintenance-<%= m.maintenance_type %>"><%= m.maintenance_type %></span></td>
+          <td><%= m.started_at %></td>
+          <td><%= m.completed_at || '维修中' %></td>
+          <td><%= m.maintenance_result || '—' %></td>
+          <td><%= m.notes || '—' %></td>
+          <td><%= m.operator_name || '—' %></td>
+        </tr>
+      <% }); %>
+      <% if (!result.maintenanceHistory.length) { %>
+        <tr><td colspan="6">暂无维修记录</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+
+  <h2>退役情况</h2>
+  <% if (result.retirement) { %>
+    <div class="detail-card">
+      <table>
+        <tr><td>退役时间</td><td><%= result.retirement.retired_at %></td></tr>
+        <tr><td>退役原因</td><td><%= result.retirement.reason %></td></tr>
+        <tr><td>审批信息</td><td><%= result.retirement.approval_info %></td></tr>
+        <tr><td>操作员</td><td><%= result.retirement.operator_name || '—' %></td></tr>
+      </table>
+    </div>
+  <% } else { %>
+    <p>该部件尚未退役。</p>
+  <% } %>
+
+<% } else if (q) { %>
+  <p>未找到部件 "<%= q %>"。</p>
+<% } %>
