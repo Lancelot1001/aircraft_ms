@@ -187,6 +187,12 @@ router.get('/swap', async (req, res) => {
 router.post('/swap', async (req, res) => {
   try {
     const { old_component_id, new_component_id, aircraft_id, operator_id, position, install_reason, removal_reason } = req.body;
+
+    // 路由层快速校验：新旧部件不能相同
+    if (old_component_id === new_component_id) {
+      throw new Error('新旧部件不能相同，更换操作无意义');
+    }
+
     const result = await installationService.swapComponent({
       old_component_id: parseInt(old_component_id),
       new_component_id: parseInt(new_component_id),
