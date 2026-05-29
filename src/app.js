@@ -19,12 +19,14 @@ const componentRoutes = require('./routes/component');
 const installationRoutes = require('./routes/installation');
 const maintenanceRoutes = require('./routes/maintenance');
 const retirementRoutes = require('./routes/retirement');
+const flightLogRoutes = require('./routes/flightLog');
 
 app.use('/', indexRoutes);
 app.use('/components', componentRoutes);
 app.use('/installations', installationRoutes);
 app.use('/maintenance', maintenanceRoutes);
 app.use('/retirements', retirementRoutes);
+app.use('/flightlogs', flightLogRoutes);
 
 // 404
 app.use((req, res) => {

@@ -1,0 +1,48 @@
+<h1>飞行日志</h1>
+
+<p>
+  <a href="/flightlogs/add" class="btn btn-primary">+ 登记飞行</a>
+  <a href="/flightlogs/parts" class="btn">飞行-部件关联</a>
+  <a href="/flightlogs/stats" class="btn">部件飞行统计</a>
+</p>
+
+<form method="GET" action="/flightlogs" style="margin-bottom:16px;">
+  <label>按飞机筛选：</label>
+  <select name="aircraft_id" onchange="this.form.submit()">
+    <option value="">全部飞机</option>
+    <% aircraftList.forEach(function(a) { %>
+      <option value="<%= a.id %>" <%= selectedAircraft == a.id ? 'selected' : '' %>><%= a.aircraft_sn %> (<%= a.model %>)</option>
+    <% }); %>
+  </select>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>飞机</th>
+      <th>起飞时间</th>
+      <th>降落时间</th>
+      <th>飞行时长(h)</th>
+      <th>任务类型</th>
+      <th>备注</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (logs.length) { %>
+      <% logs.forEach(function(l) { %>
+        <tr>
+          <td><%= l.id %></td>
+          <td><%= l.aircraft_sn %></td>
+          <td><%= l.takeoff_time %></td>
+          <td><%= l.landing_time %></td>
+          <td><%= l.flight_duration %></td>
+          <td><%= l.mission_type %></td>
+          <td><%= l.notes || '—' %></td>
+        </tr>
+      <% }); %>
+    <% } else { %>
+      <tr><td colspan="7">暂无飞行记录</td></tr>
+    <% } %>
+  </tbody>
+</table>

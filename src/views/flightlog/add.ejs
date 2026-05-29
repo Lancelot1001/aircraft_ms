@@ -1,0 +1,48 @@
+<h1>登记飞行日志</h1>
+
+<form method="POST" action="/flightlogs/add">
+  <div class="form-group">
+    <label>飞机 <span class="required">*</span></label>
+    <select name="aircraft_id" required>
+      <option value="">-- 请选择 --</option>
+      <% aircraftList.forEach(function(a) { %>
+        <option value="<%= a.id %>" <%= form.aircraft_id == a.id ? 'selected' : '' %>><%= a.aircraft_sn %> — <%= a.model %></option>
+      <% }); %>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>起飞时间 <span class="required">*</span></label>
+    <input type="datetime-local" name="takeoff_time" value="<%= form.takeoff_time || '' %>" required>
+  </div>
+
+  <div class="form-group">
+    <label>降落时间 <span class="required">*</span></label>
+    <input type="datetime-local" name="landing_time" value="<%= form.landing_time || '' %>" required>
+    <p class="hint">降落时间必须晚于起飞时间</p>
+  </div>
+
+  <div class="form-group">
+    <label>飞行时长（小时）</label>
+    <input type="number" name="flight_duration" step="0.01" min="0" placeholder="留空则自动计算" value="<%= form.flight_duration || '' %>">
+  </div>
+
+  <div class="form-group">
+    <label>任务类型 <span class="required">*</span></label>
+    <select name="mission_type" required>
+      <option value="">-- 请选择 --</option>
+      <option value="passenger" <%= form.mission_type === 'passenger' ? 'selected' : '' %>>客运 (passenger)</option>
+      <option value="cargo" <%= form.mission_type === 'cargo' ? 'selected' : '' %>>货运 (cargo)</option>
+      <option value="test" <%= form.mission_type === 'test' ? 'selected' : '' %>>测试 (test)</option>
+      <option value="training" <%= form.mission_type === 'training' ? 'selected' : '' %>>训练 (training)</option>
+      <option value="patrol" <%= form.mission_type === 'patrol' ? 'selected' : '' %>>巡逻 (patrol)</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>备注</label>
+    <input type="text" name="notes" placeholder="可选" value="<%= form.notes || '' %>">
+  </div>
+
+  <button type="submit" class="btn btn-primary">登记</button>
+</form>

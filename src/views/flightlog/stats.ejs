@@ -1,0 +1,39 @@
+<h1>部件飞行统计</h1>
+
+<form method="GET" action="/flightlogs/stats">
+  <div class="form-group">
+    <label>选择部件</label>
+    <select name="component_id" onchange="this.form.submit()">
+      <option value="">-- 请选择 --</option>
+      <% components.forEach(function(c) { %>
+        <option value="<%= c.id %>" <%= selectedId == c.id ? 'selected' : '' %>><%= c.component_sn %> — <%= c.model_name %></option>
+      <% }); %>
+    </select>
+  </div>
+</form>
+
+<% if (stats) { %>
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number"><%= stats.total_flights %></div>
+      <div class="stat-label">经历飞行次数</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= parseFloat(stats.total_flight_hours).toFixed(1) %></div>
+      <div class="stat-label">累计飞行时长 (h)</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number"><%= stats.total_installations %></div>
+      <div class="stat-label">历史安装次数</div>
+    </div>
+  </div>
+
+  <div class="detail-card">
+    <table>
+      <tr><td>部件编号</td><td><%= stats.component_sn %></td></tr>
+      <tr><td>型号</td><td><%= stats.model_name %></td></tr>
+    </table>
+  </div>
+<% } else if (selectedId) { %>
+  <p>该部件暂无安装记录或飞行数据。</p>
+<% } %>
