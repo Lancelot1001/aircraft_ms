@@ -3,75 +3,80 @@ const db = require('../config/db');
 /**
  * 维修登记 — 为部件创建维修工单
  * 宽松模式：部件状态为 installed 或 available 均可送修
+ * 事务包裹：若部件已安装则先关安装记录 → 创维修工单 → 更新状态
  * 数据库触发器会拒绝退役部件的维修
  */
 async function createMaintenance({ component_id, operator_id, maintenance_type, started_at, notes }) {
-  // 1. 校验部件存在且非退役
-  const [components] = await db.query(
-    "SELECT id, component_sn, status FROM Component WHERE id = ?", [component_id]
-  );
-  if (components.length === 0) {
-    throw new Error('部件不存在');
-  }
-  const comp = components[0];
+  return db.withTransaction(async (conn) => {
+    // 1. 校验部件存在且非退役
+    const [components] = await conn.execute(
+      "SELECT id, component_sn, status FROM Component WHERE id = ?", [component_id]
+    );
+    if (components.length === 0) {
+      throw new Error('部件不存在');
+    }
+    const comp = components[0];
 
-  if (comp.status === 'retired') {
-    throw new Error(`部件 ${comp.component_sn} 已退役，不可创建维修记录`);
-  }
+    if (comp.status === 'retired') {
+      throw new Error(`部件 ${comp.component_sn} 已退役，不可创建维修记录`);
+    }
 
-  // 2. 校验维修类型
-  const validTypes = ['routine', 'repair', 'overhaul', 'inspection'];
-  if (!validTypes.includes(maintenance_type)) {
-    throw new Error(`无效的维修类型: ${maintenance_type}，有效类型: ${validTypes.join(', ')}`);
-  }
+    // 2. 校验维修类型
+    const validTypes = ['routine', 'repair', 'overhaul', 'inspection'];
+    if (!validTypes.includes(maintenance_type)) {
+      throw new Error(`无效的维修类型: ${maintenance_type}，有效类型: ${validTypes.join(', ')}`);
+    }
 
-  // 3. 校验操作人员
-  const [operators] = await db.query(
-    'SELECT id FROM Operator WHERE id = ?', [operator_id]
-  );
-  if (operators.length === 0) {
-    throw new Error('操作人员不存在');
-  }
+    // 3. 校验操作人员
+    const [operators] = await conn.execute(
+      'SELECT id FROM Operator WHERE id = ?', [operator_id]
+    );
+    if (operators.length === 0) {
+      throw new Error('操作人员不存在');
+    }
 
-  // 4. 若部件当前是 installed，更新其状态为 under_maintenance，表示已拆下送修
-  //    （宽松模式：允许直接从飞机上送修）
-  if (comp.status === 'installed') {
-    // 部件送修意味着要从飞机上拆下，需要关闭活跃安装记录
-    const [active] = await db.query(
-      'SELECT id FROM InstallationRecord WHERE component_id = ? AND removed_at IS NULL',
+    // 4. 若部件当前处于 installed 状态，先关闭安装记录再送修
+    if (comp.status === 'installed') {
+      const [active] = await conn.execute(
+        'SELECT id FROM InstallationRecord WHERE component_id = ? AND removed_at IS NULL',
+        [component_id]
+      );
+      if (active.length > 0) {
+        await conn.execute(
+          `UPDATE InstallationRecord
+           SET removed_at = NOW(), removal_reason = '送修拆卸'
+           WHERE id = ?`,
+          [active[0].id]
+        );
+      }
+    }
+
+    // 5. 创建维修工单（若未指定 started_at 则使用数据库 NOW()）
+    const sql = started_at
+      ? `INSERT INTO MaintenanceRecord (component_id, operator_id, maintenance_type, started_at, notes)
+         VALUES (?, ?, ?, ?, ?)`
+      : `INSERT INTO MaintenanceRecord (component_id, operator_id, maintenance_type, started_at, notes)
+         VALUES (?, ?, ?, NOW(), ?)`;
+    const params = started_at
+      ? [component_id, operator_id, maintenance_type, started_at, notes || null]
+      : [component_id, operator_id, maintenance_type, notes || null];
+
+    const [result] = await conn.execute(sql, params);
+
+    // 6. 更新部件状态为维修中
+    await conn.execute(
+      "UPDATE Component SET status = 'under_maintenance' WHERE id = ?",
       [component_id]
     );
-    // 这里不自动拆卸——由调用方决定是否先拆卸再送修
-    // 但为了简化，我们允许已安装部件直接送修，状态标记为 under_maintenance
-    // 注意：此时不关闭安装记录，因为"送修"不等于"拆卸"
-    // 实际的拆卸需要在退役或更换时处理
-  }
 
-  // 5. 创建维修工单（若未指定 started_at 则使用数据库 NOW()）
-  const sql = started_at
-    ? `INSERT INTO MaintenanceRecord (component_id, operator_id, maintenance_type, started_at, notes)
-       VALUES (?, ?, ?, ?, ?)`
-    : `INSERT INTO MaintenanceRecord (component_id, operator_id, maintenance_type, started_at, notes)
-       VALUES (?, ?, ?, NOW(), ?)`;
-  const params = started_at
-    ? [component_id, operator_id, maintenance_type, started_at, notes || null]
-    : [component_id, operator_id, maintenance_type, notes || null];
-
-  const [result] = await db.query(sql, params);
-
-  // 6. 更新部件状态为维修中
-  await db.query(
-    "UPDATE Component SET status = 'under_maintenance' WHERE id = ?",
-    [component_id]
-  );
-
-  return {
-    id: result.insertId,
-    component_id,
-    component_sn: comp.component_sn,
-    maintenance_type,
-    started_at
-  };
+    return {
+      id: result.insertId,
+      component_id,
+      component_sn: comp.component_sn,
+      maintenance_type,
+      started_at: started_at || new Date()
+    };
+  });
 }
 
 /**
