@@ -42,28 +42,33 @@ INSERT INTO ComponentModel (model_name, category, design_life_hours, maintenance
 -- ============================================================
 TRUNCATE TABLE Component;
 INSERT INTO Component (component_sn, model_id, batch_number, production_date, status, cumulative_hours, notes) VALUES
--- 引擎部件
+-- 引擎部件（ENG-001 最终状态为 installed，初始插入时直接设为 installed：
+--     该部件有且仅有一条活跃安装记录，触发器不会误拦截）
 ('ENG-001', 1, 'B2018-A01', '2018-01-15', 'installed',         5800.50, '左发，已安装于B-1001'),
 ('ENG-002', 1, 'B2020-A02', '2020-06-20', 'available',            0.00, '备用引擎，仓库存储'),
 
--- 起落架部件
+-- 起落架部件（NLG-001 同理，直接设为 installed）
 ('NLG-001', 2, 'L2019-B01', '2019-03-10', 'installed',         3200.00, '前起落架，已安装于B-2002'),
 ('NLG-002', 2, 'L2021-B02', '2021-08-15', 'available',            0.00, '备用起落架，仓库存储'),
 
--- APU部件（先设为available，以便插入历史安装记录后再更新状态）
-('APU-001', 3, 'A2020-C01', '2020-02-28', 'available',         4100.00, '已安装于B-3003'),
-('APU-002', 3, 'A2020-C02', '2020-09-10', 'available',         8900.00, '从飞机拆下送修中'),
+-- APU部件（初始插入为 available，末尾批量更新修正为最终状态。
+--     因为 APU-002 最终状态为 under_maintenance，若直接写入会被触发器拦截安装记录插入）
+('APU-001', 3, 'A2020-C01', '2020-02-28', 'available',         4100.00, '→ 末尾 UPDATE 为 installed'),
+('APU-002', 3, 'A2020-C02', '2020-09-10', 'available',         8900.00, '→ 末尾 UPDATE 为 under_maintenance'),
 
--- 航电部件
-('AVI-001', 4, 'D2019-D01', '2019-05-18', 'available',         7200.00, '航电模块，已安装于B-1001'),
-('AVI-002', 4, 'D2017-D02', '2017-11-02', 'available',        15000.00, '已达寿命上限，已退役'),
+-- 航电部件（初始插入为 available，末尾批量更新修正）
+('AVI-001', 4, 'D2019-D01', '2019-05-18', 'available',         7200.00, '→ 末尾 UPDATE 为 installed'),
+('AVI-002', 4, 'D2017-D02', '2017-11-02', 'available',        15000.00, '→ 末尾 UPDATE 为 retired'),
 
--- 液压部件
-('HYD-001', 5, 'H2021-E01', '2021-03-22', 'available',         2700.00, '液压泵，已安装于B-2002'),
+-- 液压部件（初始插入为 available，末尾批量更新修正）
+('HYD-001', 5, 'H2021-E01', '2021-03-22', 'available',         2700.00, '→ 末尾 UPDATE 为 installed'),
 ('HYD-002', 5, 'H2022-E02', '2022-01-10', 'available',          500.00, '备用液压泵（已完成测试运行）');
 
 -- ============================================================
 -- 5. 安装记录（历史 + 当前有效）
+-- 注意：以下外键引用依赖 TRUNCATE 后自增 ID 从 1 开始。
+--      component_id=1 即 ENG-001，aircraft_id=1 即 B-1001，以此类推。
+--     若改用 DELETE（不自增重置），需同步调整硬编码的 ID。
 -- ============================================================
 TRUNCATE TABLE InstallationRecord;
 INSERT INTO InstallationRecord (component_id, aircraft_id, operator_id, installed_at, removed_at, position, install_reason, removal_reason, notes) VALUES

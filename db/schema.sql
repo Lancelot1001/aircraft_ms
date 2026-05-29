@@ -127,7 +127,8 @@ CREATE TABLE MaintenanceRecord (
     CONSTRAINT fk_maintenance_operator FOREIGN KEY (operator_id) REFERENCES Operator(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT chk_maintenance_type CHECK (maintenance_type IN ('routine', 'repair', 'overhaul', 'inspection')),
-    CONSTRAINT chk_maintenance_time CHECK (completed_at IS NULL OR completed_at >= started_at)
+    CONSTRAINT chk_maintenance_time CHECK (completed_at IS NULL OR completed_at >= started_at),
+    CONSTRAINT chk_maintenance_result CHECK (maintenance_result IS NULL OR maintenance_result = '修复完成' OR maintenance_result = '需更换' OR maintenance_result = '报废' OR maintenance_result = '待观察')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='维修记录表 — 记录部件的维修工单和结果';
 
@@ -140,7 +141,7 @@ CREATE TABLE FlightLog (
     aircraft_id     INT          NOT NULL COMMENT 'FK → Aircraft',
     takeoff_time    DATETIME     NOT NULL COMMENT '起飞时间',
     landing_time    DATETIME     NOT NULL COMMENT '降落时间',
-    flight_duration DECIMAL(8,2) NOT NULL COMMENT '飞行时长（小时）',
+    flight_duration DECIMAL(8,2) NOT NULL COMMENT '飞行时长（小时）— 数据库层仅校验 >0，与 TIMESTAMPDIFF 的一致性由应用层保证',
     mission_type    VARCHAR(30)  NOT NULL COMMENT '任务类型: passenger/cargo/test/training/patrol',
     notes           VARCHAR(200) DEFAULT NULL,
     CONSTRAINT fk_flight_aircraft FOREIGN KEY (aircraft_id) REFERENCES Aircraft(id)
@@ -166,6 +167,8 @@ CREATE TABLE ScrapOrRetirementRecord (
         ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT fk_scrap_operator FOREIGN KEY (operator_id) REFERENCES Operator(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
+    -- 退役原因使用 CHECK (··· OR ···) 而非 ENUM：ENUM 新增值需 ALTER TABLE，
+    -- 此处约定了 4 种；如需扩展，直接 ALTER TABLE 追加 OR 分支即可。
     CONSTRAINT chk_scrap_reason CHECK (reason = '寿命到期' OR reason = '不可修复损坏' OR reason = '技术淘汰' OR reason = '其他')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   COMMENT='退役记录表 — 记录部件退役原因和审批信息';
@@ -212,24 +215,14 @@ BEFORE INSERT ON InstallationRecord
 FOR EACH ROW
 BEGIN
     -- 检查是否存在与新区间重叠的已有记录
-    -- 重叠条件：installed_at_A < removed_at_B AND installed_at_B < removed_at_A
-    -- 其中 NULL removed_at 视为无穷大
+    -- 通用公式：两个时间区间 [A.installed_at, A.removed_at) 和 [B.installed_at, B.removed_at)
+    -- 重叠 ⇔ A.installed_at < B.removed_at  AND  B.installed_at < A.removed_at
+    -- 其中 NULL removed_at 表示"至今"，以 COALESCE(removed_at, '9999-12-31 23:59:59') 参与比较
     IF EXISTS (
         SELECT 1 FROM InstallationRecord
         WHERE component_id = NEW.component_id
-          AND (
-              -- 两条都是活跃记录（都是 NULL）— 由 uq_active_install 唯一约束已处理
-              -- 新区间与已有活跃记录重叠
-              (removed_at IS NULL AND NEW.installed_at < '9999-12-31')
-              OR
-              -- 新区间为活跃记录，且与已有记录的区间重叠
-              (NEW.removed_at IS NULL AND NEW.installed_at < removed_at)
-              OR
-              -- 两段都有结束时间，区间重叠
-              (NEW.removed_at IS NOT NULL AND removed_at IS NOT NULL
-               AND NEW.installed_at < removed_at
-               AND installed_at < NEW.removed_at)
-          )
+          AND installed_at < COALESCE(NEW.removed_at, '9999-12-31 23:59:59')
+          AND COALESCE(removed_at, '9999-12-31 23:59:59') > NEW.installed_at
     ) THEN
         SIGNAL SQLSTATE '45000'
             SET MESSAGE_TEXT = '错误：该部件存在重叠的安装时间区间，请检查已有安装记录。';
@@ -257,8 +250,8 @@ BEGIN
             SELECT 1 FROM InstallationRecord
             WHERE component_id = NEW.component_id
               AND id != NEW.id
-              AND NEW.removed_at > installed_at
-              AND (removed_at IS NULL OR removed_at > NEW.installed_at)
+              AND installed_at < COALESCE(NEW.removed_at, '9999-12-31 23:59:59')
+              AND COALESCE(removed_at, '9999-12-31 23:59:59') > NEW.installed_at
         ) THEN
             SIGNAL SQLSTATE '45000'
                 SET MESSAGE_TEXT = '错误：关闭此安装记录会导致与其他记录的时间区间重叠。';
