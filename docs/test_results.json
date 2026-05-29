@@ -1,0 +1,188 @@
+{
+  "total": 29,
+  "passed": 29,
+  "failed": 0,
+  "results": [
+    {
+      "name": "7.1 退役部件安装",
+      "status": "PASS",
+      "detail": "部件 AVI-002 已退役，不可安装"
+    },
+    {
+      "name": "7.1 维修中部件安装",
+      "status": "PASS",
+      "detail": "部件 APU-002 正在维修中，不可安装"
+    },
+    {
+      "name": "",
+      "status": "SECTION",
+      "detail": "7.1: 2 pass, 0 fail"
+    },
+    {
+      "name": "7.2 重复激活安装",
+      "status": "PASS",
+      "detail": "部件 ENG-001 当前已安装在其它位置，请先拆卸"
+    },
+    {
+      "name": "7.2 篡改component_id",
+      "status": "PASS",
+      "detail": "错误：禁止篡改安装记录的关键字段（component_id / aircraft_id / installed_at）。"
+    },
+    {
+      "name": "7.2 篡改installed_at",
+      "status": "PASS",
+      "detail": "错误：禁止篡改安装记录的关键字段（component_id / aircraft_id / installed_at）。"
+    },
+    {
+      "name": "",
+      "status": "SECTION",
+      "detail": "7.2: 5 pass, 0 fail"
+    },
+    {
+      "name": "7.3 DELETE InstallationRecord",
+      "status": "PASS",
+      "detail": "错误：禁止物理删除安装记录。部件拆卸请通过 UPDATE 设置 removed_at。"
+    },
+    {
+      "name": "7.3 DELETE MaintenanceRecord",
+      "status": "PASS",
+      "detail": "错误：禁止物理删除维修记录。维修数据属于审计档案，不可删除。"
+    },
+    {
+      "name": "7.3 DELETE FlightLog",
+      "status": "PASS",
+      "detail": "错误：禁止物理删除飞行日志。飞行记录属于审计档案，不可删除。"
+    },
+    {
+      "name": "7.3 DELETE ScrapOrRetirementRecord",
+      "status": "PASS",
+      "detail": "错误：禁止物理删除退役记录。退役数据属于审计档案，不可删除。"
+    },
+    {
+      "name": "7.3 退役部件维修",
+      "status": "PASS",
+      "detail": "部件 AVI-002 已退役，不可创建维修记录"
+    },
+    {
+      "name": "",
+      "status": "SECTION",
+      "detail": "7.3: 10 pass, 0 fail"
+    },
+    {
+      "name": "7.4 安装不存在部件回滚",
+      "status": "PASS",
+      "detail": "部件不存在"
+    },
+    {
+      "name": "7.4 更换事务回滚",
+      "status": "PASS",
+      "detail": "记录数不变: 10→10"
+    },
+    {
+      "name": "",
+      "status": "SECTION",
+      "detail": "7.4: 12 pass, 0 fail"
+    },
+    {
+      "name": "7.5 安装后存在活跃记录",
+      "status": "PASS",
+      "detail": "活跃记录数: 1"
+    },
+    {
+      "name": "7.5 退役后安装关闭",
+      "status": "PASS",
+      "detail": "活跃记录: 0"
+    },
+    {
+      "name": "7.5 退役后状态retired",
+      "status": "PASS",
+      "detail": "状态: retired"
+    },
+    {
+      "name": "7.5 退役记录写入",
+      "status": "PASS",
+      "detail": "退役记录ID: 2"
+    },
+    {
+      "name": "",
+      "status": "SECTION",
+      "detail": "7.5: 16 pass, 0 fail"
+    },
+    {
+      "name": "7.6 入库",
+      "status": "PASS",
+      "detail": "ID: 11"
+    },
+    {
+      "name": "7.6 安装→installed",
+      "status": "PASS",
+      "detail": "installed"
+    },
+    {
+      "name": "7.6 飞行登记",
+      "status": "PASS",
+      "detail": "B-3003 测试飞行"
+    },
+    {
+      "name": "7.6 拆卸→available",
+      "status": "PASS",
+      "detail": "available"
+    },
+    {
+      "name": "7.6 维修→fixed",
+      "status": "PASS",
+      "detail": "available"
+    },
+    {
+      "name": "7.6 重新安装",
+      "status": "PASS",
+      "detail": "成功"
+    },
+    {
+      "name": "7.6 退役→retired",
+      "status": "PASS",
+      "detail": "retired"
+    },
+    {
+      "name": "7.6 生命周期追溯",
+      "status": "PASS",
+      "detail": "安装2次/维修1次"
+    },
+    {
+      "name": "",
+      "status": "SECTION",
+      "detail": "7.6: 24 pass, 0 fail"
+    },
+    {
+      "name": "7.7 installed部件有活跃安装",
+      "status": "PASS",
+      "detail": "孤立记录: 0"
+    },
+    {
+      "name": "7.7 安装<拆卸",
+      "status": "PASS",
+      "detail": "违规: 0"
+    },
+    {
+      "name": "7.7 飞行起<降",
+      "status": "PASS",
+      "detail": "违规: 0"
+    },
+    {
+      "name": "7.7 退役部件无活跃安装",
+      "status": "PASS",
+      "detail": "违规: 0"
+    },
+    {
+      "name": "7.7 安装→部件FK完整",
+      "status": "PASS",
+      "detail": "断裂: 0"
+    },
+    {
+      "name": "",
+      "status": "SECTION",
+      "detail": "7.7: 29 pass, 0 fail"
+    }
+  ],
+  "timestamp": "2026-05-29T16:58:04.024Z"
+}
