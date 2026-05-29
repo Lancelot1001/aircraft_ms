@@ -1,4 +1,4 @@
-<h1>维修记录</h1>
+﻿<h1>维修记录</h1>
 
 <p>
   <a href="/maintenance/create" class="btn btn-primary">+ 创建维修工单</a>
@@ -28,9 +28,9 @@
           <td><%= m.id %></td>
           <td><%= m.component_sn %></td>
           <td><%= m.model_name %></td>
-          <td><span class="maintenance-type maintenance-<%= m.maintenance_type %>"><%= m.maintenance_type %></span></td>
+          <td><span class="badge badge-<%= m.maintenance_type %>"><%= m.maintenance_type %></span></td>
           <td><%= m.started_at %></td>
-          <td><%= m.completed_at || '<span class="status status-under_maintenance">维修中</span>' %></td>
+          <td><%= m.completed_at || '<span class="badge badge-under_maintenance">维修中</span>' %></td>
           <td><%= m.maintenance_result || '—' %></td>
           <td><%= m.operator_name || '—' %></td>
           <td>

@@ -1,4 +1,4 @@
-<h1>生命周期追溯</h1>
+﻿<h1>生命周期追溯</h1>
 
 <form method="GET" action="/query/lifecycle">
   <div class="form-group">
@@ -21,7 +21,7 @@
       <tr><td>设计寿命</td><td><%= c.design_life_hours %> 小时</td></tr>
       <tr><td>建议维修间隔</td><td><%= c.maintenance_interval_hours %> 小时</td></tr>
       <tr><td>累计使用时长</td><td><%= c.cumulative_hours %> 小时</td></tr>
-      <tr><td>当前状态</td><td><span class="status status-<%= c.status %>"><%= c.status %></span></td></tr>
+      <tr><td>当前状态</td><td><span class="badge badge-<%= c.status %>"><%= c.status %></span></td></tr>
       <tr><td>备注</td><td><%= c.notes || '—' %></td></tr>
     </table>
   </div>
@@ -57,7 +57,7 @@
     <tbody>
       <% result.maintenanceHistory.forEach(function(m) { %>
         <tr>
-          <td><span class="maintenance-type maintenance-<%= m.maintenance_type %>"><%= m.maintenance_type %></span></td>
+          <td><span class="badge badge-<%= m.maintenance_type %>"><%= m.maintenance_type %></span></td>
           <td><%= m.started_at %></td>
           <td><%= m.completed_at || '维修中' %></td>
           <td><%= m.maintenance_result || '—' %></td>

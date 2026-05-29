@@ -1,4 +1,4 @@
-<h1>安装记录</h1>
+﻿<h1>安装记录</h1>
 
 <p>
   <a href="/installations?active=1" class="btn">仅看当前在位</a>
@@ -28,7 +28,7 @@
           <td><%= ir.aircraft_sn_val %> (<%= ir.aircraft_model %>)</td>
           <td><%= ir.position %></td>
           <td><%= ir.installed_at %></td>
-          <td><%= ir.removed_at || '<span class="status status-installed">在位</span>' %></td>
+          <td><%= ir.removed_at || '<span class="badge badge-installed">在位</span>' %></td>
           <td><%= ir.operator_name || '—' %></td>
         </tr>
       <% }); %>

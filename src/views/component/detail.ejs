@@ -1,4 +1,4 @@
-<h1>部件详情</h1>
+﻿<h1>部件详情</h1>
 
 <% if (!component) { %>
   <div class="alert alert-error">部件不存在</div>
@@ -11,7 +11,7 @@
       <tr><td>型号</td><td><%= component.model_name %> (<%= component.category %>)</td></tr>
       <tr><td>批次号</td><td><%= component.batch_number %></td></tr>
       <tr><td>生产日期</td><td><%= component.production_date %></td></tr>
-      <tr><td>状态</td><td><span class="status status-<%= component.status %>"><%= component.status %></span></td></tr>
+      <tr><td>状态</td><td><span class="badge badge-<%= component.status %>"><%= component.status %></span></td></tr>
       <tr><td>累计使用时长</td><td><%= component.cumulative_hours %> 小时</td></tr>
       <tr><td>设计寿命</td><td><%= component.design_life_hours %> 小时</td></tr>
       <tr><td>备注</td><td><%= component.notes || '—' %></td></tr>

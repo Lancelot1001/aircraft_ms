@@ -1,48 +1,108 @@
-<h1>系统概览</h1>
+<% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-error"><%= error %></div>
+<% } %>
 
-<div class="stats-grid">
-  <div class="stat-card">
-    <div class="stat-number"><%= stats.components %></div>
-    <div class="stat-label">部件总数</div>
+<!-- KPI 卡片 -->
+<div class="kpi-grid">
+  <div class="kpi-card info">
+    <div class="kpi-value"><%= stats.components || 0 %></div>
+    <div class="kpi-label">部件总数</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-number"><%= stats.aircraft %></div>
-    <div class="stat-label">飞机数量</div>
+  <div class="kpi-card">
+    <div class="kpi-value"><%= stats.aircraft || 0 %></div>
+    <div class="kpi-label">飞机数量</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-number"><%= stats.activeInstalls %></div>
-    <div class="stat-label">当前安装中</div>
+  <div class="kpi-card success">
+    <div class="kpi-value"><%= stats.activeInstalls || 0 %></div>
+    <div class="kpi-label">当前安装中</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-number"><%= stats.maintenances %></div>
-    <div class="stat-label">维修记录</div>
+  <div class="kpi-card warning">
+    <div class="kpi-value"><%= stats.maintenances || 0 %></div>
+    <div class="kpi-label">维修记录</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value"><%= stats.totalFlights || 0 %></div>
+    <div class="kpi-label">飞行记录</div>
   </div>
 </div>
 
-<h2>最近飞行记录</h2>
-<table>
-  <thead>
-    <tr>
-      <th>飞机编号</th>
-      <th>起飞时间</th>
-      <th>降落时间</th>
-      <th>飞行时长(h)</th>
-      <th>任务类型</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% if (recentFlights.length) { %>
-      <% recentFlights.forEach(function(f) { %>
-        <tr>
-          <td><%= f.aircraft_sn %></td>
-          <td><%= f.takeoff_time %></td>
-          <td><%= f.landing_time %></td>
-          <td><%= f.flight_duration %></td>
-          <td><%= f.mission_type %></td>
-        </tr>
+<!-- 图表行 -->
+<div class="chart-row">
+  <div class="card">
+    <div class="card-title">部件状态分布</div>
+    <div class="chart-container">
+      <canvas id="statusChart"></canvas>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">部件类别分布</div>
+    <div class="chart-container">
+      <canvas id="categoryChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- 飞机安装概况 -->
+<div class="card">
+  <div class="card-title">飞机在位部件</div>
+  <table>
+    <thead><tr><th>飞机编号</th><th>型号</th><th>在位部件数</th></tr></thead>
+    <tbody>
+      <% (aircraftOverview||[]).forEach(function(a) { %>
+        <tr><td><%= a.aircraft_sn %></td><td><%= a.model %></td><td><%= a.parts || 0 %></td></tr>
       <% }); %>
-    <% } else { %>
-      <tr><td colspan="5">暂无飞行记录</td></tr>
-    <% } %>
-  </tbody>
-</table>
+    </tbody>
+  </table>
+</div>
+
+<!-- 最近飞行 -->
+<div class="card">
+  <div class="card-title">最近飞行记录</div>
+  <table>
+    <thead><tr><th>飞机</th><th>起飞</th><th>降落</th><th>时长(h)</th><th>类型</th></tr></thead>
+    <tbody>
+      <% (recentFlights||[]).forEach(function(f) { %>
+        <tr><td><%= f.aircraft_sn %></td><td><%= f.takeoff_time %></td><td><%= f.landing_time %></td><td><%= f.flight_duration %></td><td><%= f.mission_type %></td></tr>
+      <% }); %>
+      <% if (!recentFlights.length) { %><tr><td colspan="5">暂无</td></tr><% } %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+(function() {
+  var colors = { blue:'#2563EB', green:'#22C55E', yellow:'#F59E0B', red:'#EF4444', purple:'#6366F1', grey:'#94A3B8' };
+
+  // 状态分布 — 环形图
+  <% if (statusDist && statusDist.length) { %>
+    new Chart(document.getElementById('statusChart'), {
+      type: 'doughnut',
+      data: {
+        labels: [<% statusDist.forEach(function(s){ %>'<%= s.status %>',<% }); %>],
+        datasets: [{
+          data: [<% statusDist.forEach(function(s){ %><%= s.cnt %>,<% }); %>],
+          backgroundColor: [colors.blue, colors.green, colors.yellow, colors.red],
+          borderWidth: 1
+        }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:'bottom', labels:{ font:{ size:11 } } } } }
+    });
+  <% } %>
+
+  // 类别分布 — 柱状图
+  <% if (categoryDist && categoryDist.length) { %>
+    new Chart(document.getElementById('categoryChart'), {
+      type: 'bar',
+      data: {
+        labels: [<% categoryDist.forEach(function(c){ %>'<%= c.category %>',<% }); %>],
+        datasets: [{
+          label: '数量',
+          data: [<% categoryDist.forEach(function(c){ %><%= c.cnt %>,<% }); %>],
+          backgroundColor: [colors.blue, colors.purple, colors.green, colors.yellow, colors.red]
+        }]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } } }
+    });
+  <% } %>
+})();
+</script>

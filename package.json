@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/Lancelot1001/aircraft_ms#readme",
   "dependencies": {
+    "chart.js": "^4.5.1",
     "ejs": "^6.0.1",
     "express": "^5.2.1",
     "express-ejs-layouts": "^2.5.1",

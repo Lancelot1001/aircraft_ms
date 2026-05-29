@@ -1,4 +1,4 @@
-<h1>部件管理</h1>
+﻿<h1>部件管理</h1>
 
 <p>
   <a href="/components/add" class="btn">+ 新部件入库</a>
@@ -32,7 +32,7 @@
           <td><%= c.category %></td>
           <td><%= c.batch_number %></td>
           <td><%= c.production_date %></td>
-          <td><span class="status status-<%= c.status %>"><%= c.status %></span></td>
+          <td><span class="badge badge-<%= c.status %>"><%= c.status %></span></td>
           <td><%= c.cumulative_hours %></td>
           <td><a href="/components/<%= c.id %>">详情</a></td>
         </tr>
