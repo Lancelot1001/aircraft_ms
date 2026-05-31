@@ -34,7 +34,12 @@
           <td><%= c.production_date %></td>
           <td><span class="badge badge-<%= c.status %>"><%= c.status %></span></td>
           <td><%= c.cumulative_hours %></td>
-          <td><a href="/components/<%= c.id %>">详情</a></td>
+          <td>
+            <a href="/components/<%= c.id %>">详情</a>
+            <% if (c.status === 'installed') { %>
+              | <a href="/installations/swap">更换</a>
+            <% } %>
+          </td>
         </tr>
       <% }); %>
     <% } else { %>

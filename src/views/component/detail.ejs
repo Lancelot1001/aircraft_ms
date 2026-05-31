@@ -16,6 +16,15 @@
       <tr><td>设计寿命</td><td><%= component.design_life_hours %> 小时</td></tr>
       <tr><td>备注</td><td><%= component.notes || '—' %></td></tr>
     </table>
+    <div style="margin-top:12px;">
+      <a href="/components" class="btn">返回列表</a>
+      <% if (component.status === 'installed') { %>
+        <a href="/installations/swap" class="btn btn-warning">更换此部件</a>
+        <a href="/installations/uninstall" class="btn">拆卸</a>
+      <% } else if (component.status === 'available') { %>
+        <a href="/installations/install" class="btn btn-primary">安装此部件</a>
+      <% } %>
+    </div>
   </div>
 
   <h2>安装历史</h2>
@@ -50,5 +59,4 @@
     </tbody>
   </table>
 
-  <a href="/components" class="btn">返回列表</a>
 <% } %>
