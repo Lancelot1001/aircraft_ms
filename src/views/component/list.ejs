@@ -36,7 +36,9 @@
           <td><%= c.cumulative_hours %></td>
           <td>
             <a href="/components/<%= c.id %>">详情</a>
-            <% if (c.status === 'installed') { %>
+            <% if (c.status === 'available') { %>
+              | <a href="/installations/install">安装</a>
+            <% } else if (c.status === 'installed') { %>
               | <a href="/installations/swap">更换</a>
             <% } %>
           </td>
