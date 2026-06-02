@@ -15,6 +15,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // 路由
 const indexRoutes = require('./routes/index');
+const aircraftRoutes = require('./routes/aircraft');
 const componentRoutes = require('./routes/component');
 const installationRoutes = require('./routes/installation');
 const maintenanceRoutes = require('./routes/maintenance');
@@ -23,6 +24,7 @@ const flightLogRoutes = require('./routes/flightLog');
 const queryRoutes = require('./routes/query');
 
 app.use('/', indexRoutes);
+app.use('/aircraft', aircraftRoutes);
 app.use('/components', componentRoutes);
 app.use('/installations', installationRoutes);
 app.use('/maintenance', maintenanceRoutes);

@@ -1,0 +1,58 @@
+<h1>飞机管理</h1>
+
+<div class="btn-group" style="margin-bottom:14px;">
+  <a href="/installations/install" class="btn btn-primary">+ 安装部件</a>
+  <a href="/installations/uninstall" class="btn">拆卸部件</a>
+  <a href="/installations/swap" class="btn">部件更换</a>
+</div>
+
+<% if (aircraft.length) { %>
+  <% aircraft.forEach(function(a) { %>
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <div>
+          <span style="font-size:15px; font-weight:700;"><%= a.aircraft_sn %></span>
+          <span style="color:#666; margin-left:8px;"><%= a.model %></span>
+          <span class="badge badge-<%= a.status || 'available' %>" style="margin-left:8px;"><%= a.status %></span>
+        </div>
+        <div>
+          <span style="font-size:12px; color:#999;">在位部件: <strong><%= a.parts.length %></strong></span>
+        </div>
+      </div>
+
+      <% if (a.parts.length) { %>
+        <table>
+          <thead>
+            <tr>
+              <th>部件编号</th>
+              <th>型号</th>
+              <th>类别</th>
+              <th>位置</th>
+              <th>安装时间</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% a.parts.forEach(function(p) { %>
+              <tr>
+                <td><a href="/components/<%= p.id %>"><%= p.component_sn %></a></td>
+                <td><%= p.model_name %></td>
+                <td><%= p.category %></td>
+                <td><%= p.position %></td>
+                <td><%= p.installed_at %></td>
+                <td>
+                  <a href="/installations/uninstall" class="btn btn-sm">拆卸</a>
+                  <a href="/installations/swap" class="btn btn-sm">更换</a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p style="color:#999; font-size:12px;">该飞机当前无在位部件</p>
+      <% } %>
+    </div>
+  <% }); %>
+<% } else { %>
+  <p>暂无飞机数据</p>
+<% } %>
