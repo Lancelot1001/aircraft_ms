@@ -1,0 +1,117 @@
+{
+  "timestamp": "2026-06-02T10:21:25.330Z",
+  "total": 18,
+  "passed": 18,
+  "failed": 0,
+  "results": [
+    {
+      "id": "入口",
+      "name": "导航栏含安装入口",
+      "ok": true,
+      "detail": "Aircraft MS 仪表盘 部件 安装 飞行 维修 退役 查询"
+    },
+    {
+      "id": "入口",
+      "name": "部件列表操作",
+      "ok": true,
+      "detail": "操作: 详情, 更换, 详情, 详情, 更换, 详情, 详情, 更换, 详情, 详情, 更换, 详情, 详情, 更换, 详情"
+    },
+    {
+      "id": "入口",
+      "name": "installed 部件详情按钮",
+      "ok": true,
+      "detail": "按钮: 返回列表 | 更换此部件 | 拆卸"
+    },
+    {
+      "id": "入口",
+      "name": "available 部件详情按钮",
+      "ok": true,
+      "detail": "按钮: 返回列表 | 安装此部件"
+    },
+    {
+      "id": "1.入库",
+      "name": "新部件注册",
+      "ok": true,
+      "detail": "部件 E2E-TEST-001 入库成功！"
+    },
+    {
+      "id": "2.安装",
+      "name": "部件装到飞机",
+      "ok": true,
+      "detail": "安装成功！安装记录 ID: 11"
+    },
+    {
+      "id": "3.拆卸",
+      "name": "部件从飞机卸下",
+      "ok": true,
+      "detail": "部件 E2E-TEST-001 拆卸成功"
+    },
+    {
+      "id": "4.维修登记",
+      "name": "创建维修工单",
+      "ok": true,
+      "detail": "维修工单创建成功！工单 ID: 6，部件 E2E-TEST-001 状态已更新为维修中"
+    },
+    {
+      "id": "4.维修完成",
+      "name": "维修工单关闭",
+      "ok": true,
+      "detail": "维修完成！部件 E2E-TEST-001 状态已恢复为 available"
+    },
+    {
+      "id": "5.更换入口",
+      "name": "更换表单可访问",
+      "ok": true,
+      "detail": "旧部件选项: 6, 新部件选项: 5"
+    },
+    {
+      "id": "5.更换",
+      "name": "部件更换事务",
+      "ok": true,
+      "detail": "更换成功！旧部件已拆卸，新部件已安装（新安装记录 ID: 13）"
+    },
+    {
+      "id": "6.飞行登记",
+      "name": "记录飞行任务",
+      "ok": true,
+      "detail": "飞行日志登记成功！ID: 13，时长 2.5h"
+    },
+    {
+      "id": "6.关联查询",
+      "name": "飞行-部件关联表单",
+      "ok": true,
+      "detail": "表单可访问"
+    },
+    {
+      "id": "7.退役",
+      "name": "部件退役处理",
+      "ok": true,
+      "detail": "退役处理完成！部件 E2E-TEST-001 已标记为退役（退役 ID: 2）"
+    },
+    {
+      "id": "8.追溯",
+      "name": "完整生命周期",
+      "ok": true,
+      "detail": "区块: 基本属性, 安装历史（2 条）, 维修记录（1 条）, 退役情况"
+    },
+    {
+      "id": "8.退役可见",
+      "name": "追溯含退役信息",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "id": "9a.退役后安装",
+      "name": "退役部件不可选",
+      "ok": true,
+      "detail": "已从列表移除"
+    },
+    {
+      "id": "9b.删除拦截",
+      "name": "DELETE 有触发器和路由保护",
+      "ok": true,
+      "detail": "已配置数据库层+服务层双重保护"
+    }
+  ],
+  "screenshots": "C:\\Users\\17641\\Desktop\\Work\\Course\\Database\\实践课\\aircraft_ms\\demo\\screenshots"
+}
