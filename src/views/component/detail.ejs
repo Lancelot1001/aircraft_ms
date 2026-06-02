@@ -5,6 +5,36 @@
   <a href="/components" class="btn">返回列表</a>
 <% } else { %>
 
+  <!-- 操作栏 — 根据部件状态显示不同操作 -->
+  <% if (component.status === 'installed') { %>
+    <div class="card" style="border-left:3px solid #2563EB; background:#F8FAFE;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-weight:700;">可用操作：</span>
+        <a href="/installations/swap" class="btn btn-warning">更换此部件</a>
+        <a href="/installations/uninstall" class="btn">拆卸部件</a>
+        <span style="color:#666;font-size:12px;margin-left:auto;">当前状态：<span class="badge badge-installed">installed</span></span>
+      </div>
+    </div>
+  <% } else if (component.status === 'available') { %>
+    <div class="card" style="border-left:3px solid #22C55E; background:#F8FDF8;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-weight:700;">可用操作：</span>
+        <a href="/installations/install" class="btn btn-success">安装此部件</a>
+        <span style="color:#666;font-size:12px;margin-left:auto;">当前状态：<span class="badge badge-available">available</span></span>
+      </div>
+    </div>
+  <% } else if (component.status === 'under_maintenance') { %>
+    <div class="card" style="border-left:3px solid #F59E0B; background:#FFFDF5;">
+      <span style="color:#92400E;font-size:13px;">该部件正在维修中，不可安装或拆卸。</span>
+      <span style="color:#666;font-size:12px;margin-left:8px;">当前状态：<span class="badge badge-under_maintenance">under_maintenance</span></span>
+    </div>
+  <% } else if (component.status === 'retired') { %>
+    <div class="card" style="border-left:3px solid #EF4444; background:#FFF5F5;">
+      <span style="color:#991B1B;font-size:13px;">该部件已退役，所有操作已关闭。</span>
+      <span style="color:#666;font-size:12px;margin-left:8px;">当前状态：<span class="badge badge-retired">retired</span></span>
+    </div>
+  <% } %>
+
   <div class="detail-card">
     <h2><%= component.component_sn %></h2>
     <table>
@@ -16,15 +46,6 @@
       <tr><td>设计寿命</td><td><%= component.design_life_hours %> 小时</td></tr>
       <tr><td>备注</td><td><%= component.notes || '—' %></td></tr>
     </table>
-    <div style="margin-top:12px;">
-      <a href="/components" class="btn">返回列表</a>
-      <% if (component.status === 'installed') { %>
-        <a href="/installations/swap" class="btn btn-warning">更换此部件</a>
-        <a href="/installations/uninstall" class="btn">拆卸</a>
-      <% } else if (component.status === 'available') { %>
-        <a href="/installations/install" class="btn btn-primary">安装此部件</a>
-      <% } %>
-    </div>
   </div>
 
   <h2>安装历史</h2>
@@ -58,5 +79,7 @@
       <% } %>
     </tbody>
   </table>
+
+  <p style="margin-top:12px;"><a href="/components" class="btn">← 返回部件列表</a></p>
 
 <% } %>
